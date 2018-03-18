@@ -96,6 +96,10 @@ class RegisterController extends Controller
     */
     public function confirmEmail($hash)
     {
+        if ($hash) {
+            User::where('confirmation_hash', $hash)
+                ->update(['confirmed' => 1]);
+        }
         return $hash ? redirect('/') : 'fatal: no hash';
     }
 }
