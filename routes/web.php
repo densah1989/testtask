@@ -18,3 +18,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/register', '\App\Http\Controllers\Auth\RegisterController@register')->name('register');
+Route::get('/confirm/{hash}', '\App\Http\Controllers\Auth\RegisterController@confirmEmail')->name('confirmEmail');
+Route::post('/login', '\App\Http\Controllers\Auth\LoginController@prelogin')->name('login');

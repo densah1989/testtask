@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Events\UsersActions;
 
 class RegisterController extends Controller
 {
@@ -55,6 +58,23 @@ class RegisterController extends Controller
     }
 
     /**
+     * Handle a registration request for the application.
+     * To avoid authorisation on registering this method overwrites parents one.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(\Illuminate\Http\Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath());
+    }
+
+    /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
@@ -66,6 +86,16 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'confirmation_hash' => md5($data['name'].rand(1, 9).md5($data['email']))
         ]);
+    }
+    
+    /**
+     * @param $hash string
+     * @return void
+    */
+    public function confirmEmail($hash)
+    {
+        return $hash ? redirect('/') : 'fatal: no hash';
     }
 }
