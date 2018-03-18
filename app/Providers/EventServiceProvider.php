@@ -16,9 +16,6 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\Event' => [
             'App\Listeners\EventListener',
         ],
-        '\Illuminate\Auth\Events\Registered' => [
-            'App\Listeners\AuthListener'
-        ],
         'App\Events\UsersActions' => [
             'App\Listeners\AuthListener'
         ],
